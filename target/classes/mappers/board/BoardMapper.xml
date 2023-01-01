@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.usedbook.mybatis.board.BoardMapper">
+<resultMap type="com.book.usedbook.board.dto.BoardDTO" id="board">
+ 	<id property="bookName" column="book_name"/>
+ 	<result property="price" column="price"/>
+ 	<result property="state" column="state"/>
+ 	<result property="regDate" column="reg_date"/>
+ 	<result property="quality" column="quality"/>
+ 	<result property="partitionNum" column="partition_num"/> 
+ 	<result property="phone" column="phone"/> 
+</resultMap>
+	<select id="allListCount" resultType="Integer">
+		select count(*) from stock
+	</select>
+	<select id="curListCount" resultType="Integer">
+		select count(*) from stock where state != 3
+	</select>
+	<select id="getAllList" resultMap="board">
+		select B.* from(select rownum rn, A.* from
+		(select stock.price, book.book_name, stock.state, stock.reg_date, stock.quality, stock.partition_num, bookmember.phone
+			from stock, book, bookmember where stock.book_id = book.book_id and stock.user_id = bookmember.id order by stock.reg_date desc)A)B
+		where rn between #{s} and #{e}
+	</select>
+	<select id="getCurList" resultMap="board">
+		select B.* from(select rownum rn, A.* from
+		(select stock.price, book.book_name, stock.state, stock.reg_date, stock.quality, stock.partition_num, bookmember.phone
+			from stock, book, bookmember where stock.book_id = book.book_id and stock.user_id = bookmember.id and stock.state != 3 order by stock.reg_date desc)A)B
+		where rn between #{s} and #{e}
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

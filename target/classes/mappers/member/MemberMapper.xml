@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.book.usedbook.mybatis.member.MemberMapper">
+<resultMap type="com.book.usedbook.member.dto.MemberDTO" id="member">
+ 	<id property="id" column="id"/>
+ 	<result property="pw" column="pw"/>
+ 	<result property="phone" column="phone"/>
+ 	<result property="sessionId" column="session_id"/>
+ 	<result property="studentId" column="student_id"/>
+ 	<result property="name" column="name"/>
+ </resultMap>
+<resultMap type="com.book.usedbook.board.dto.BoardDTO" id="userBoard">
+ 	<id property="bookName" column="book_name"/>
+ 	<result property="price" column="price"/>
+ 	<result property="state" column="state"/>
+ 	<result property="regDate" column="reg_date"/>
+ 	<result property="quality" column="quality"/>
+ 	<result property="partitionNum" column="partition_num"/> 	
+ </resultMap>
+ 
+  	<select id="userCheck" resultMap="member">
+  		select * from bookmember where id=#{id}
+  	</select>
+  	<select id="getMyList" resultMap="userBoard">
+  		select B.* from(select rownum rn, A.* from
+			(select stock.price, book.book_name, stock.state, stock.reg_date, stock.quality, stock.partition_num
+				from stock, book where stock.user_id=#{id} and stock.book_id = book.book_id 
+				order by stock.reg_date desc)A
+									)B
+		where rn between #{s} and #{e}
+  	</select>
+  	<select id="listCount" resultType="Integer">
+		select count(*) from stock where user_id=#{id}
+	</select>
+  	<insert id="register">
+  		insert into bookmember(id,pw,phone,student_id,name) values(#{id}, #{pw}, #{phone}, #{studentId}, #{name})
+  	</insert>
+ 	 <update id="keepLogin">
+ 	 	update bookmember set session_id=#{sessionId} where id=#{id}
+ 	 </update>
+ 	 <select id="getUserSessionId" resultMap="member">
+ 	 	select * from bookmember where session_id=#{sid}
+ 	 </select>
+	  <select id="getId" resultType="String">
+ 	 	select id from bookmember
+ 	 </select>
+ 	   <delete id="delete">
+	  	delete from bookmember where id=#{id}
+	  </delete>
+	  <update id="modify">
+	  	update bookmember set name=#{name}, phone=#{phone}, pw=#{pw} where id=#{id}
+	  </update>    
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
